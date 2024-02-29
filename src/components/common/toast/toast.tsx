@@ -7,22 +7,26 @@ export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
   t?: string | number;
   title: string;
   isRevertable?: boolean;
+  handleUndo?: () => void;
 }
 
-const Toast = React.memo(({ t, title, isRevertable, ...props }: ToastProps) => {
+const Toast = React.memo(({ t, title, isRevertable, handleUndo, ...props }: ToastProps) => {
   const onUndo = React.useCallback(() => {
     toast.dismiss(t);
-  }, [t]);
+    handleUndo?.();
+  }, [handleUndo, t]);
 
   return (
     <div
-      className={cn(
-        "flex items-center justify-between rounded-lg bg-[#8B95A1] px-5 py-4 text-white shadow",
-        props.className
-      )}
+      className={cn("flex items-center justify-between rounded bg-grey-900 py-3.5 text-white shadow", props.className)}
       {...props}
+      style={{
+        paddingLeft: "1.125rem",
+        paddingRight: "1.125rem",
+        ...props.style,
+      }}
     >
-      <p>{title}</p>
+      <p className="text-body3">{title}</p>
       {isRevertable && <UndoButton onClick={onUndo} />}
     </div>
   );
@@ -30,7 +34,7 @@ const Toast = React.memo(({ t, title, isRevertable, ...props }: ToastProps) => {
 
 const UndoButton = React.memo(({ onClick }: { onClick: () => void }) => {
   return (
-    <Button onClick={onClick} variant={"default"}>
+    <Button onClick={onClick} variant={"default"} className="h-0 p-0 text-main-400">
       <p>Undo</p>
     </Button>
   );

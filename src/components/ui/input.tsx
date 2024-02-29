@@ -15,11 +15,11 @@ interface InputProps extends HTMLProps<HTMLInputElement> {
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
 
-const inputVariants = cva("outline-none w-full", {
+const containerVariants = cva("", {
   variants: {
     variant: {
-      default: "border-gray-300",
-      focused: "border-2 border-blue-700",
+      default: "border-grey-300",
+      focused: "border border-main-700",
       error: "border-error",
     },
   },
@@ -27,10 +27,11 @@ const inputVariants = cva("outline-none w-full", {
     variant: "default",
   },
 });
-const labelVariants = cva("block text-h6 font-medium mb-1", {
+
+const labelVariants = cva("block mb-1.5 text-sm font-semibold", {
   variants: {
     variant: {
-      default: "text-gray-700",
+      default: "text-grey-700",
       focused: "text-main-700",
       error: "text-error",
     },
@@ -60,25 +61,30 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={`input-container${type}`}>
         {label && <label className={cn(labelVariants({ variant: inputState }))}>{label}</label>}
-        <div className="relative flex w-full justify-center rounded-lg border px-4 py-2 outline-none">
+        <div
+          className={
+            cn(containerVariants({ variant: inputState })) +
+            " outline-none relative flex w-full justify-center rounded-lg border px-5 py-2"
+          }
+        >
           <input
             ref={ref}
-            className={cn(inputVariants({ variant: inputState }))}
+            className={"h-9 w-full text-lg outline-none"}
             type={type}
             onFocus={handleFocus} // 수정된 handleFocus 함수로 변경
             onBlur={handleBlur}
             {...props}
           />
-          {
+          {inputState === "focused" && !props.disabled && props.value ? (
             <div className="flex items-center pl-4 ">
               <button
-                className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-300"
+                className="flex h-5 w-5 items-center justify-center rounded-full bg-grey-300"
                 onClick={clearInput}
               >
                 <IcXCircle color={"#f9fafb"} />
               </button>
             </div>
-          }
+          ) : null}
         </div>
         {inputState === "error" && errorDescription && <p className="mt-1 text-body4 text-error">{errorDescription}</p>}
       </div>
