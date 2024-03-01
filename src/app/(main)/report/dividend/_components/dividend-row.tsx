@@ -1,22 +1,30 @@
-import { SingleYearlyDividendResponse, StockResponse } from "@/api/generated/endpoint.schemas";
+import { SingleYearlyDividendResponse } from "@/api/generated/endpoint.schemas";
 import Image from "next/image";
 import React from "react";
-
-export interface Dividend extends StockResponse {
-  share?: number;
-}
+import TickerDefault from "@/components/icons/ticker-default";
+import { useRouter } from "next/navigation";
 
 export const DividendRow = React.memo(({ dividend }: { dividend: SingleYearlyDividendResponse }) => {
+  const router = useRouter();
+
+  const handleRowClick = React.useCallback(() => {
+    router.push(`/stock/${dividend.ticker}`);
+  }, [dividend.ticker, router]);
+
   return (
-    <div className="flex h-full w-full flex-1 items-center gap-4">
+    <div onClick={handleRowClick} className="flex h-full w-full flex-1 cursor-pointer items-center gap-4">
       <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-grey-100">
-        <Image
-          className="flex size-10 object-contain p-1"
-          width={40}
-          height={40}
-          src={dividend.logoUrl ?? "/next.svg"}
-          alt={dividend.ticker}
-        />
+        {dividend.logoUrl === null ? (
+          <TickerDefault className="h-10 min-w-10 max-w-10" />
+        ) : (
+          <Image
+            className="flex size-10 object-contain p-1"
+            width={40}
+            height={40}
+            src={dividend.logoUrl}
+            alt={dividend.ticker}
+          />
+        )}
       </div>
       <div className="items-between flex w-full flex-col justify-center  gap-1">
         <div className="flex items-center justify-between">
