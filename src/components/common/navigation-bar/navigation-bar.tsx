@@ -5,10 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Toast from "@/components/common/toast/toast";
 import { toast } from "sonner";
+import { event } from "@/utils/gtag";
 
 const ShareData = {
   title: "Payout",
-  text: "Self-check Your Dividend Portfolio",
 };
 
 function validateReportUrl(url: string) {
@@ -25,15 +25,18 @@ const NavigationBar = () => {
   };
 
   const handleShareClick = async () => {
+    event({
+      action: "Share Button Click",
+    });
     try {
       if (isShareSupported()) {
         navigator.share({ ...ShareData, url: window.location.href });
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        toast.custom((t) => <Toast t={t} title={`copied`} />);
+        toast.custom((t) => <Toast t={t} title={`copied to clipboard`} />);
       }
     } catch (e) {
-      toast.custom((t) => <Toast t={t} title={`Sharing not supported or data not shareable.`} />);
+      toast.custom((t) => <Toast t={t} title={`Sharing is not supported on this device`} />);
     }
   };
 
